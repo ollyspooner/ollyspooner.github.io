@@ -142,3 +142,130 @@ XSLT library to take an input XML string and an input XSLT stylesheet and output
 new XML string (you can find it in the App Store). Now that we can transform our 
 XML, we can carry on!
 
+What we need to do here is reproduce the same XML document, but with a few changes.
+Fortunately, much cleverer people than I have come up with a technique called the 
+"Identity Transform", which does exactly this in suspiciously little code (5 lines 
+to be exact). Have a look at https://en.wikipedia.org/wiki/Identity_transform and 
+http://dh.obdurodon.org/identity.xhtml for a description of how this works.
+
+Now we have add the namespaces we need and add more templates to make the actual 
+changes to the schema: 
+
+```xml
+<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"  
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:q1="http://microsoft.com/wsdl/types/"
+  xmlns:bb="bb_appfx_dataforms">
+    <xsl:output method="xml" indent="no"/>
+
+        <xsl:template match="@* | node()">
+		<xsl:copy>
+			<xsl:apply-templates select="@* | node()"/>
+		</xsl:copy>
+	</xsl:template>
+
+	<xsl:template match="bb:Value">
+		<xsl:copy>
+			<xsl:choose>
+				<xsl:when test="contains( @xsi:type, '':'' )">
+					<xsl:variable name="valueType" select="substring-after( @xsi:type, '':'' )" />
+					<xsl:element name="{$valueType}val">
+						<xsl:apply-templates />               
+					</xsl:element>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:element name="{@xsi:type}val">
+						<xsl:apply-templates />               
+					</xsl:element>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:copy>
+	</xsl:template>
+
+</xsl:stylesheet>
+```
+
+The reciprocal transformation is a bit more tricky, as we neeed to create a template for each possible type:
+
+```xml
+<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"  
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:blac="Blackbaud.AppFx.WebService.API.1" 
+  xmlns:bb="bb_appfx_dataforms">
+	<xsl:output method="xml" indent="yes"/>
+	<!-- Uses the XSLT Identity Transform pattern (see https://en.wikipedia.org/wiki/Identity_transform and http://dh.obdurodon.org/identity.xhtml for help) -->
+
+	<xsl:template  match="@* | node()">
+		<xsl:copy>
+			<xsl:apply-templates select="@* | node()"/>
+		</xsl:copy>
+	</xsl:template>
+
+	<xsl:template match="bb:Values/bb:fv/bb:Value[bb:stringval]">
+		<xsl:copy>
+			<xsl:attribute name="xsi:type">xsd:string</xsl:attribute>
+			<xsl:value-of select="bb:stringval"/>
+		</xsl:copy>
+	</xsl:template>
+
+	<xsl:template match="bb:Values/bb:fv/bb:Value[bb:integerval]">
+		<xsl:copy>
+			<xsl:attribute name="xsi:type">xsd:integer</xsl:attribute>
+			<xsl:value-of select="bb:integerval"/>
+		</xsl:copy>
+	</xsl:template>
+
+	<xsl:template match="bb:Values/bb:fv/bb:Value[bb:decimalval]">
+		<xsl:copy>
+			<xsl:attribute name="xsi:type">xsd:decimal</xsl:attribute>
+			<xsl:value-of select="bb:decimalval"/>
+		</xsl:copy>
+	</xsl:template>
+
+	<xsl:template match="bb:Values/bb:fv/bb:Value[bb:dateval]">
+		<xsl:copy>
+			<xsl:attribute name="xsi:type">xsd:date</xsl:attribute>
+			<xsl:value-of select="bb:dateval"/>
+		</xsl:copy>
+	</xsl:template>
+
+	<xsl:template match="bb:Values/bb:fv/bb:Value[bb:dateTimeval]">
+		<xsl:copy>
+			<xsl:attribute name="xsi:type">xsd:dateTime</xsl:attribute>
+			<xsl:value-of select="bb:dateTimeval"/>
+		</xsl:copy>
+	</xsl:template>
+
+	<xsl:template match="bb:Values/bb:fv/bb:Value[bb:base64Binaryval]">
+		<xsl:copy>
+			<xsl:attribute name="xsi:type">xsd:base64Binary</xsl:attribute>
+			<xsl:value-of select="bb:base64Binaryval"/>
+		</xsl:copy>
+	</xsl:template>
+
+	<xsl:template match="bb:Values/bb:fv/bb:Value[bb:guidval]">
+		<xsl:copy>
+			<xsl:namespace name="ms">http://microsoft.com/wsdl/types/</xsl:namespace>
+			<xsl:attribute name="xsi:type">ms:guid</xsl:attribute>
+			<xsl:value-of select="bb:guidval"/>
+		</xsl:copy>
+	</xsl:template>
+
+	<xsl:template match="bb:Values/bb:fv/bb:Value[bb:DataFormItemArrayValueval] ">
+		<xsl:copy>
+			<xsl:attribute name="xsi:type">DataFormItemArrayValue</xsl:attribute>
+			<xsl:apply-templates select="bb:DataFormItemArrayValueval/@* | bb:DataFormItemArrayValueval/node()" />
+		</xsl:copy>
+	</xsl:template>
+
+	<xsl:template match="bb:Values/bb:fv/bb:Value[bb:booleanval][count(./*)=1]">
+		<xsl:copy>
+			<xsl:attribute name="xsi:type">xsd:boolean</xsl:attribute>
+			<xsl:value-of select="bb:booleanval"/>
+		</xsl:copy>
+	</xsl:template>
+
+</xsl:stylesheet>
+```
