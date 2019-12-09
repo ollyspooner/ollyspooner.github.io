@@ -20,7 +20,7 @@ unhelpful:
   * "Change the XML schema" - it is a wsdl from a third party system, so I can't 
     change it!
   * "Do it in Java" - the ultimate last resort, but such a shame not to be able 
-    to use the easily configuratble import and export mappings that Mendix worked 
+    to use the easily configurable import and export mappings that Mendix worked 
     so hard to provide us with!
 
 Just for completeness, when we want to call the reciprocal action "DataFormSave", 
