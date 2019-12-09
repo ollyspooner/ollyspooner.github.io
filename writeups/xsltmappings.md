@@ -10,6 +10,8 @@ Mendix makes communicating with other systems using webservices very easy. Just
 import the service definition, pick your action and let Mendix generate mappings
 and entities for the request and response.
 
+![Unsupported AnyType](xsltmappings_img/xsltmappings_img_01.png)
+
 Oh dear. The Value node is the one that contains the data that we want to 
 retrieve! This means that we cannot use an import mapping to read the returned 
 data. Offered suggestions on how to manage this situation were, to say the least, 
@@ -37,10 +39,96 @@ Step 1: separating the schemas
 
 Normally we would call the import and export mappings from within the web service 
 call action.
- 
+
+![Normal webservice actions](xsltmappings_img/xsltmappings_img_02.png)
+
 Instead, we are going to apply the mappings outside the web service call action, 
 which gives us access to the XML both before and after.
+
+![Separated webservice actions](xsltmappings_img/xsltmappings_img_03.png)
+
+Let’s have a look at the schema from the wsdl for a moment. Searching for 
+“DataFormLoadReply” found us the type of the reply element. From here we can do 
+another search for the definition of our DataFormItem element.
+
+```xml
+<s:schema elementFormDefault="qualified" targetNamespace="bb_appfx_dataforms">
+	<s:complexType name="DataFormItem">
+		<s:sequence>
+			<s:element minOccurs="0" maxOccurs="1" name="Values">
+				<s:complexType>
+					<s:sequence>
+						<s:element minOccurs="0" maxOccurs="unbounded" name="fv" nillable="true" type="s47:DataFormFieldValue" />
+					</s:sequence>
+				</s:complexType>
+			</s:element>
+		</s:sequence>
+	</s:complexType>
+	<s:complexType name="DataFormItemArrayValue">
+		<s:sequence>
+			<s:element minOccurs="0" maxOccurs="1" name="Items" type="s47:ArrayOfDataFormItem" />
+		</s:sequence>
+	</s:complexType>
+	<s:complexType name="ArrayOfDataFormItem">
+		<s:sequence>
+			<s:element minOccurs="0" maxOccurs="unbounded" name="DataFormItem" nillable="true" type="s47:DataFormItem" />
+		</s:sequence>
+	</s:complexType>
+	<s:complexType name="DataFormFieldValue">
+		<s:sequence>
+			<s:element minOccurs="0" maxOccurs="1" name="Value" />
+			<s:element minOccurs="0" maxOccurs="1" name="ValueTranslation" type="s:string" />
+		</s:sequence>
+		<s:attribute name="ID" type="s:string" />
+	</s:complexType>
+</s:schema>
+```
+
+So here we can see our problem element: “Value”. The issue is that the “type” 
+attribute is missing, which means that it can actually hold data of any type. 
+Mendix doesn’t do an “Any” type. Let’s see if we can come up with something that 
+Mendix can handle, by giving it a type and allowing that type to contain a 
+discrete element for each of the potential types of data it can contain; which, 
+just to make things difficult, includes an array of other DataFormFieldValues and 
+a guid from a different namespace:
+
+```xml
+<s:complexType name="DataFormFieldValue">
+	<s:sequence>
+		<s:element minOccurs="0" maxOccurs="1" name="Value" type="s47:mx_anytype" />
+		<s:element minOccurs="0" maxOccurs="1" name="ValueTranslation" type="s:string" />
+	</s:sequence>
+	<s:attribute name="ID" type="s:string" />
+</s:complexType>
+<s:complexType name="mx_anytype">
+	<s:sequence>
+		<s:element minOccurs="0" maxOccurs="1" name="booleanval" type="s:boolean" />
+		<s:element minOccurs="0" maxOccurs="1" name="stringval" type="s:string" />
+		<s:element minOccurs="0" maxOccurs="1" name="intval" type="s:int" />
+		<s:element minOccurs="0" maxOccurs="1" name="longval" type="s:long" />
+		<s:element minOccurs="0" maxOccurs="1" name="dateTimeval" type="s:dateTime" />
+		<s:element minOccurs="0" maxOccurs="1" name="doubleval" type="s:double" />
+		<s:element minOccurs="0" maxOccurs="1" name="floatval" type="s:float" />
+		<s:element minOccurs="0" maxOccurs="1" name="decimalval" type="s:decimal" />
+		<s:element minOccurs="0" maxOccurs="1" name="integerval" type="s:integer" />
+		<s:element minOccurs="0" maxOccurs="1" name="dateval" type="s:date" />
+		<s:element minOccurs="0" maxOccurs="1" name="base64Binaryval" type="s:string" />
+		<s:element minOccurs="0" maxOccurs="1" name="unsignedLongval" type="s:unsignedLong" />
+		<s:element minOccurs="0" maxOccurs="1" name="unsignedByteval" type="s:unsignedByte" />
+		<s:element minOccurs="0" maxOccurs="1" name="positiveIntegerval" type="s:positiveInteger" />
+		<s:element minOccurs="0" maxOccurs="1" name="guidval" type="s1:guid" />
+		<s:element minOccurs="0" maxOccurs="1" name="DataFormItemArrayValueval" type="s47:DataFormItemArrayValue" />
+	</s:sequence>
+</s:complexType>
+```
  
+Now we need to save this wsdl as a file and import it into Mendix as a separate 
+service definition:
+
+![Separated webservice actions](xsltmappings_img/xsltmappings_img_04.png)
+ 
+Now we have two web services: one that we can map and one that we can call.
+
 Now all we need is a reliable way to transform one xml schema into a different one…
 
 Oh! Hang on! That is exactly what XSLT is for!
@@ -54,18 +142,3 @@ XSLT library to take an input XML string and an input XSLT stylesheet and output
 new XML string (you can find it in the App Store). Now that we can transform our 
 XML, we can carry on!
 
-Let’s have a look at the schema from the wsdl for a moment:
- 
-Searching for “DataFormLoadReply” found us the type of the reply element. From 
-here we can do another search for the definition of our DataFormItem element.
- 
-So here we can see our problem element: “Value”. The issue is that the “type” 
-attribute is missing, which means that it can actually hold data of any type. 
-Mendix doesn’t do an “Any” type. Let’s see if we can come up with something that 
-Mendix can handle, by giving it a type and allowing that type to contain a 
-discrete element for each of the potential types of data it can contain:
- 
-Now we need to save this wsdl as a file and import it into Mendix as a separate 
-service definition:
- 
-Now we have two web services: one that we can map and one that we can call.
