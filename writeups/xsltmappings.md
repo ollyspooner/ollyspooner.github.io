@@ -16,14 +16,14 @@ Oh dear. The Value node is the one that contains the data that we want to
 retrieve! This means that we cannot use an import mapping to read the returned 
 data. Offered suggestions on how to manage this situation were, to say the least, 
 unhelpful:
-  * “Don’t use that node” – well yes, but then we would not have the data!
-  * “Change the XML schema” – it is a wsdl from a third party system, so I can’t 
+  * "Don't use that node" – well yes, but then we would not have the data!
+  * "Change the XML schema" – it is a wsdl from a third party system, so I can't 
     change it!
-  * “Do it in Java” – the ultimate last resort, but such a shame not to be able 
+  * "Do it in Java" – the ultimate last resort, but such a shame not to be able 
     to use the easily configuratble import and export mappings that Mendix worked 
     so hard to provide us with!
 
-Just for completeness, when we want to call the reciprocal action “DataFormSave”, 
+Just for completeness, when we want to call the reciprocal action "DataFormSave", 
 we need to be able to export the same structure.
 
 Let’s look at this another way. There are two conflicting requirements:
@@ -84,9 +84,9 @@ another search for the definition of our DataFormItem element.
 </s:schema>
 ```
 
-So here we can see our problem element: “Value”. The issue is that the “type” 
+So here we can see our problem element: "Value". The issue is that the "type" 
 attribute is missing, which means that it can actually hold data of any type. 
-Mendix doesn’t do an “Any” type. Let’s see if we can come up with something that 
+Mendix doesn’t do an "Any" type. Let's see if we can come up with something that 
 Mendix can handle, by giving it a type and allowing that type to contain a 
 discrete element for each of the potential types of data it can contain; which, 
 just to make things difficult, includes an array of other DataFormFieldValues and 
