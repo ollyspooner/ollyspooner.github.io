@@ -1,4 +1,4 @@
-remote_theme: pages-themes/leap-day@latest
+remote_theme: pages-themes/leap-day
 plugins:
 - jekyll-remote-theme
 title: Olly's GH Pages
