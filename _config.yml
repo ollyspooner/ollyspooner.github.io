@@ -1,7 +1,6 @@
-remote_theme: pages-themes/leap-day
+remote_theme: ollyspooner/ollyspooner.pagestheme
 plugins:
 - jekyll-remote-theme
 title: Olly's GH Pages
 description: CV and other stuff
 show_downloads: false
-# theme: jekyll-theme-leap-day
