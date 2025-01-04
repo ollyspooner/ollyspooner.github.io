@@ -14,3 +14,7 @@
 <tr><th>Bivvi bag</th><td></td><td></td><td>•</td></tr>
 <tr><th>Poles</th><td></td><td></td><td>•</td></tr>
 </table>
+
+## Cooking
+
+## Carrying
