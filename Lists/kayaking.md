@@ -125,19 +125,7 @@ Bag D is a small bag of items to transfer into the PFD and other pockets on the 
 
 A wide-necked Nalgene bottle
     
-* Screwdriver handle
-* Screwdriver bits (PZ, Flat, Hex, Torx)
-* Drill bit (hex fitting)
-* Pliers
-* Knife
-* Flashband
-* Epoxy glue
-* Epoxy putty
-* Gorilla tape
-* Cord
-* Wire
-* Polythene sheet
-* GRP kit
+* [Repair kit](repairkit.md)
 			
 ## Bag S (rear hatch) - Sleeping
 
