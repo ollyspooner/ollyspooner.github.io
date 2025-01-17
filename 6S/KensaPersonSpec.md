@@ -1,3 +1,8 @@
+* Do the right thing by the planet, people and Kensa
+* Be the best we can be
+* Innovate with purpose
+
+
 Work with teams across the business to understand current end to end processes
 and lead in the identification of opportunities for improvement or thinking
 that could be hindering customer experience.
@@ -8,7 +13,7 @@ that could be hindering customer experience.
 
 **Understanding of Kaizen projects, Six Sigma and/or other Business Process improvement methods and tools. Understanding of how technology can assist in the improvement of our quality and efficiencies.**
 
-Many of my past projects have been essentially ones of improvement of an existing system. As a system is not only the software, the entire system has to be considered, including the people participating in it. Each process has to be identified and mapped before areas for improvement can be defined. 
+Many of my past projects have been essentially ones of improvement of an existing system. As a system is not only the software, the entire system has to be considered, including the people participating in it. Each process has to be identified and mapped before areas for improvement can be defined.
 
 When the team was tasked with creating a new donation system I broke the system down into different sections: public front-end/private back-end. These sections were further broken down until we had a set of building blocks to work on improving. I broke the team into pairs and we spent a session producing rough versions of the main user interfaces and architectural elements. These were then reviewed and revised before being demoed to the stakeholders.
 
