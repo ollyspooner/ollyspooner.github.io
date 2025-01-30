@@ -2,10 +2,11 @@
 
 ## Contact info
 
-* 7 Hendra Close, Hendra, Stithians, TRURO. TR3 7AL
-* <a href="tel:+447879474789">+44 7879 474789</a>
-* ollyspooner@gmail.com
-* https://www.linkedin.com/in/oliver-spooner-51229a2b/
+* Address: 7 Hendra Close, Hendra, Stithians, TRURO. TR3 7AL
+* Mobile: <a href="tel:+447879474789">+44 7879 474789</a>
+* Email: ollyspooner@gmail.com
+* LinkedIn: https://www.linkedin.com/in/oliver-spooner-51229a2b/
+* Mendix: https://developerprofiles.mendix.com/link/profile/overview/57219
 
 ## Professional Summary
 
@@ -44,7 +45,7 @@ I am an experienced Developer and Development Manager with over 20 years of expe
 
 November 2013 - Present
 
-* Specialised in software development, started as part of a much smaller IT team 
+* Specialised in software development, started as part of a much smaller IT team.
 * Developed applications using SharePoint and later Mendix.
 * Developed a donation system that reduced processing time by over 75%.
 * Contributed custom modules and widgets to the Mendix community.
