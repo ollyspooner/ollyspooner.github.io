@@ -15,3 +15,11 @@
 * Product Catalogue
 * Inventory App
 * Consignments App
+
+## To do
+
+1. Campaign Monitor data export:
+   * 1 off
+   * Refreshable
+2. Inventory data export
+3. Importer issues
