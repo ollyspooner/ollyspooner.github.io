@@ -1,0 +1,20 @@
+```mermaid
+mindmap
+	root((Cordage))
+		Materials
+			Natural
+				Bark
+					Cedar
+				Reeds
+				Bramble
+				Grass
+				Nettles
+				Hair/wool
+			Man-made
+				Nylon
+				Polypropylene
+		Structure
+			2-ply
+			3-ply (Plaited/braided)
+			Kernmantle
+```
